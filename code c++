@@ -1,0 +1,72 @@
+#include<stdio.h>
+#include<vector>
+#include<algorithm>
+
+using namespace std;
+
+int n, e;
+struct Edge{
+	int src,dst,cost;
+};
+
+vector<Edge> edges;
+	
+int parent[200001];
+	
+int getParent(int curr){
+	if(parent[curr] != curr)
+		return parent[curr] = getParent(parent[curr]);
+	return parent[curr];
+}
+
+bool compare(Edge a, Edge b)
+{ 
+    return a.cost < b.cost; 
+}
+		
+int main(){
+	
+	while(scanf("%d %d",&n,&e) != EOF){
+		
+		edges.clear();
+		
+		if(n == 0 && e == 0)
+			break; 
+		
+		for(int i=0;i<e;i++){
+			int a,b,c;
+			scanf("%d %d %d",&a,&b,&c);
+			
+			Edge e;
+			e.src = a;
+			e.dst = b;
+			e.cost = c;
+			
+			edges.push_back(e);
+			
+		}
+		
+		sort(edges.begin(), edges.end(),compare);
+		
+		for(int i=0;i<n;i++){
+			parent[i] = i;
+		}
+		
+		int totalCost = 0;
+		int mst = 0;
+	 	
+		for(int i=0;i<e;i++){
+			
+			totalCost += edges[i].cost;
+			
+			if(getParent(edges[i].src) != getParent(edges[i].dst)){
+				parent[getParent(edges[i].src)] = getParent(edges[i].dst);
+				mst += edges[i].cost;
+			}	
+		}
+		
+		printf("%d\n",totalCost-mst);
+	}
+	
+	return 0;
+}
